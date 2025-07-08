@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Calendar } from 'lucide-react';
+import { Menu, X, Calendar, Settings } from 'lucide-react';
+import { useAdmin } from '../context/GalleryContext';
 import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAdmin, toggleAdmin } = useAdmin();
   const location = useLocation();
 
   const navigation = [
@@ -16,6 +18,19 @@ const Header = () => {
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleAdminToggle = () => {
+    toggleAdmin();
+    closeMenu();
+  };
 
   return (
     <>
@@ -51,20 +66,28 @@ const Header = () => {
                   key={item.name}
                   to={item.path}
                   className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   {item.name}
                 </Link>
               ))}
-              <Link to="/contact" className="btn btn-primary schedule-btn">
+              <Link to="/contact" className="btn btn-primary schedule-btn" onClick={closeMenu}>
                 <Calendar size={16} />
                 Schedule Meeting
               </Link>
+              <button
+                className={`admin-toggle ${isAdmin ? 'active' : ''}`}
+                onClick={handleAdminToggle}
+                title={isAdmin ? 'Exit Admin Mode' : 'Enter Admin Mode'}
+              >
+                <Settings size={16} />
+                {isAdmin ? 'Admin ON' : 'Admin'}
+              </button>
             </nav>
 
             <button
               className="menu-toggle"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={toggleMenu}
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -72,8 +95,14 @@ const Header = () => {
           </div>
         </div>
       </header>
+      
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div 
+          className="mobile-overlay"
+          onClick={closeMenu}
+        />
+      )}
     </>
   );
 };
-
-export default Header;

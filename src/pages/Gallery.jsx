@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Download } from 'lucide-react';
+import { Search, Filter, Eye, Download, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useGallery } from '../context/GalleryContext';
+import { useGallery, useAdmin } from '../context/GalleryContext';
+import toast from 'react-hot-toast';
 import MediaModal from '../components/MediaModal';
 import './Gallery.css';
 
@@ -12,8 +13,10 @@ const Gallery = () => {
     filter, 
     searchTerm, 
     setFilter, 
-    setSearchTerm 
+    setSearchTerm,
+    removeItem
   } = useGallery();
+  const { isAdmin } = useAdmin();
   const [selectedItem, setSelectedItem] = useState(null);
 
   const filters = [
@@ -34,6 +37,15 @@ const Gallery = () => {
   const getEventTypeColor = (eventType) => {
     const type = eventTypes.find(t => t.key === eventType);
     return type ? type.color : '#f35525';
+  };
+
+  const handleDeleteItem = (e, itemId, itemTitle) => {
+    e.stopPropagation();
+    
+    if (window.confirm(`Are you sure you want to delete "${itemTitle}"? This action cannot be undone.`)) {
+      removeItem(itemId);
+      toast.success('Item deleted successfully');
+    }
   };
 
   if (loading) {
@@ -127,6 +139,15 @@ const Gallery = () => {
                         <span>View</span>
                       </div>
                     </div>
+                    {isAdmin && (
+                      <button
+                        className="delete-btn"
+                        onClick={(e) => handleDeleteItem(e, item.id, item.title)}
+                        title="Delete item"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                   </div>
                   
                   <div className="item-content">

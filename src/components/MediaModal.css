@@ -64,6 +64,16 @@
   transform: scale(1.1);
 }
 
+.delete-btn-modal {
+  background: #ff4757;
+  color: white;
+}
+
+.delete-btn-modal:hover {
+  background: #ff3742;
+  transform: scale(1.1);
+}
+
 .close-btn {
   background: #f5f5f5;
   color: #666;

@@ -1,10 +1,15 @@
 import React from 'react';
-import { X, Download, Calendar, Tag, Clock } from 'lucide-react';
+import { X, Download, Calendar, Tag, Clock, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAdmin, useGallery } from '../context/GalleryContext';
+import toast from 'react-hot-toast';
 import { formatFileSize } from '../utils/fileUtils';
 import './MediaModal.css';
 
 const MediaModal = ({ item, onClose }) => {
+  const { isAdmin } = useAdmin();
+  const { removeItem } = useGallery();
+  
   if (!item) return null;
 
   const handleDownload = () => {
@@ -14,6 +19,14 @@ const MediaModal = ({ item, onClose }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete "${item.title}"? This action cannot be undone.`)) {
+      removeItem(item.id);
+      toast.success('Item deleted successfully');
+      onClose();
+    }
   };
 
   return (
@@ -34,6 +47,15 @@ const MediaModal = ({ item, onClose }) => {
         <div className="modal-header">
           <h2>{item.title}</h2>
           <div className="modal-actions">
+            {isAdmin && (
+              <button
+                className="action-btn delete-btn-modal"
+                onClick={handleDelete}
+                title="Delete"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
             <button
               className="action-btn download-btn"
               onClick={handleDownload}

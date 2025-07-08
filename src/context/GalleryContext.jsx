@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const GalleryContext = createContext();
+const AdminContext = createContext();
 
 // Action types
 const GALLERY_ACTIONS = {
@@ -14,6 +15,11 @@ const GALLERY_ACTIONS = {
   SET_ERROR: 'SET_ERROR'
 };
 
+const ADMIN_ACTIONS = {
+  TOGGLE_ADMIN: 'TOGGLE_ADMIN',
+  SET_ADMIN: 'SET_ADMIN'
+};
+
 // Initial state
 const initialState = {
   items: [],
@@ -22,6 +28,10 @@ const initialState = {
   error: null,
   filter: 'all',
   searchTerm: ''
+};
+
+const initialAdminState = {
+  isAdmin: false
 };
 
 // Reducer
@@ -50,6 +60,17 @@ const galleryReducer = (state, action) => {
     case GALLERY_ACTIONS.SET_ERROR:
       return { ...state, error: action.payload, loading: false };
     
+    default:
+      return state;
+  }
+};
+
+const adminReducer = (state, action) => {
+  switch (action.type) {
+    case ADMIN_ACTIONS.TOGGLE_ADMIN:
+      return { ...state, isAdmin: !state.isAdmin };
+    case ADMIN_ACTIONS.SET_ADMIN:
+      return { ...state, isAdmin: action.payload };
     default:
       return state;
   }
@@ -122,6 +143,7 @@ const mockGalleryItems = [
 // Provider component
 export const GalleryProvider = ({ children }) => {
   const [state, dispatch] = useReducer(galleryReducer, initialState);
+  const [adminState, adminDispatch] = useReducer(adminReducer, initialAdminState);
   const [storedItems, setStoredItems] = useLocalStorage('galleryItems', []);
 
   // Load initial data
@@ -209,19 +231,33 @@ export const GalleryProvider = ({ children }) => {
     return filtered;
   };
 
+  // Admin actions
+  const toggleAdmin = () => {
+    adminDispatch({ type: ADMIN_ACTIONS.TOGGLE_ADMIN });
+  };
+
+  const setAdmin = (isAdmin) => {
+    adminDispatch({ type: ADMIN_ACTIONS.SET_ADMIN, payload: isAdmin });
+  };
+
   const value = {
     ...state,
+    ...adminState,
     filteredItems: getFilteredItems(),
     addItem,
     removeItem,
     setFilter,
-    setSearchTerm
+    setSearchTerm,
+    toggleAdmin,
+    setAdmin
   };
 
   return (
-    <GalleryContext.Provider value={value}>
-      {children}
-    </GalleryContext.Provider>
+    <AdminContext.Provider value={{ ...adminState, toggleAdmin, setAdmin }}>
+      <GalleryContext.Provider value={value}>
+        {children}
+      </GalleryContext.Provider>
+    </AdminContext.Provider>
   );
 };
 
@@ -230,6 +266,15 @@ export const useGallery = () => {
   const context = useContext(GalleryContext);
   if (!context) {
     throw new Error('useGallery must be used within a GalleryProvider');
+  }
+  return context;
+};
+
+// Custom hook to use admin context
+export const useAdmin = () => {
+  const context = useContext(AdminContext);
+  if (!context) {
+    throw new Error('useAdmin must be used within a GalleryProvider');
   }
   return context;
 };

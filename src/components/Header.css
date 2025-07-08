@@ -92,12 +92,59 @@
   margin-left: 20px;
 }
 
+.admin-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 2px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.admin-toggle:hover {
+  border-color: #f35525;
+  color: #f35525;
+}
+
+.admin-toggle.active {
+  background: #f35525;
+  border-color: #f35525;
+  color: white;
+}
+
 .menu-toggle {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
   color: #1e1e1e;
+  z-index: 1001;
+  position: relative;
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
 
 /* Mobile Styles */
@@ -119,34 +166,45 @@
 
   .nav {
     position: fixed;
-    top: 100%;
+    top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     background: white;
     flex-direction: column;
-    padding: 20px;
+    padding: 80px 20px 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-100%);
+    transform: translateX(100%);
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
+    z-index: 1000;
+    justify-content: flex-start;
+    align-items: stretch;
   }
 
   .nav-open {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
     visibility: visible;
   }
 
   .nav-link {
-    width: 100%;
-    text-align: center;
-    padding: 15px;
+    text-align: left;
+    padding: 15px 0;
     border-bottom: 1px solid #eee;
+    font-size: 18px;
   }
 
   .schedule-btn {
     margin-left: 0;
     margin-top: 10px;
+    align-self: flex-start;
+  }
+
+  .admin-toggle {
+    margin-left: 0;
+    margin-top: 10px;
+    align-self: flex-start;
   }
 }
