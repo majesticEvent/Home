@@ -1,56 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Eye, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getGalleryItems } from '../services/api';
+import { useGallery } from '../context/GalleryContext';
 import MediaModal from '../components/MediaModal';
 import './Gallery.css';
 
 const Gallery = () => {
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const { 
+    filteredItems, 
+    loading, 
+    filter, 
+    searchTerm, 
+    setFilter, 
+    setSearchTerm 
+  } = useGallery();
   const [selectedItem, setSelectedItem] = useState(null);
-
-  useEffect(() => {
-    loadGalleryItems();
-  }, []);
-
-  useEffect(() => {
-    filterItems();
-  }, [items, filter, searchTerm]);
-
-  const loadGalleryItems = async () => {
-    try {
-      const data = await getGalleryItems();
-      setItems(data);
-    } catch (error) {
-      console.error('Error loading gallery items:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterItems = () => {
-    let filtered = items;
-
-    // Filter by type
-    if (filter !== 'all') {
-      filtered = filtered.filter(item => item.type === filter);
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.eventType.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredItems(filtered);
-  };
 
   const filters = [
     { key: 'all', label: 'All Media' },
