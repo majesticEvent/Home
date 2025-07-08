@@ -32,14 +32,23 @@ export const uploadMedia = async (fileData) => {
 export const sendContactForm = async (formData) => {
   try {
     await delay(2000);
-    
-    // Simulate sending email
-    console.log('Contact form submitted:', formData);
-    
+    const result = await emailjs.send(
+      'service_s7xftls',          // your EmailJS service ID
+      'template_vza89hp',         // your EmailJS template ID
+      {
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        event_type: formData.eventType,
+        event_date: formData.eventDate,
+        message: formData.message,
+      },
+      '6esZzpKWZjIp-9f5B'          // your EmailJS public key
+    );
+    console.log('EmailJS result:', result);
     return { success: true };
-    
   } catch (error) {
-    console.error('Contact form error:', error);
-    throw new Error('Failed to send message');
+    console.error('EmailJS Error:', error);
+    throw new Error('Failed to send message via EmailJS');
   }
 };

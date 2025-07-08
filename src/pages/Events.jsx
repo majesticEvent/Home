@@ -62,10 +62,17 @@ const Events = () => {
   ];
 
   const stats = [
-    { number: "500+", label: "Events Completed" },
-    { number: "10+", label: "Years Experience" },
-    { number: "50+", label: "Happy Couples" },
-    { number: "100%", label: "Satisfaction Rate" }
+    { number: "50+", label: "Events Completed" },
+
+
+
+    { number: "5+", label: "Years Experience" },
+
+
+    { number: "40+", label: "Happy Couples" },
+
+
+    { number: "90%", label: "Satisfaction Rate" }
   ];
 
   return (

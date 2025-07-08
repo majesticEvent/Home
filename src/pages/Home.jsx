@@ -29,10 +29,10 @@ const Home = () => {
   ];
 
   const stats = [
-    { number: "500+", label: "Events Completed" },
-    { number: "10+", label: "Years Experience" },
-    { number: "50+", label: "Happy Couples" },
-    { number: "100%", label: "Satisfaction Rate" }
+    { number: "50+", label: "Events Completed" },
+    { number: "5+", label: "Years Experience" },
+    { number: "40+", label: "Happy Couples" },
+    { number: "90%", label: "Satisfaction Rate" }
   ];
 
   return (
@@ -41,7 +41,7 @@ const Home = () => {
       <section className="hero">
         <div className="hero-background">
           <video autoPlay muted loop playsInline>
-            <source src="https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=139&oauth2_token_id=57447761" type="video/mp4" />
+          <source src="src/assets/1.mp4" type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
         </div>
