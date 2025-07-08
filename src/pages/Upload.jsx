@@ -3,12 +3,15 @@ import { useDropzone } from 'react-dropzone';
 import { Upload as UploadIcon, X, Image, Video, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { useGallery } from '../context/GalleryContext';
 import { uploadMedia } from '../services/api';
+import { validateFile, createFilePreview, revokeFilePreview } from '../utils/fileUtils';
 import './Upload.css';
 
 const Upload = () => {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const { addItem } = useGallery();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -17,15 +20,21 @@ const Upload = () => {
   });
 
   const onDrop = useCallback((acceptedFiles) => {
-    const newFiles = acceptedFiles.map(file => ({
-      file,
-      id: Math.random().toString(36).substr(2, 9),
-      preview: URL.createObjectURL(file),
-      type: file.type.startsWith('image/') ? 'image' : 'video'
-    }));
+    const validFiles = [];
     
-    setFiles(prev => [...prev, ...newFiles]);
-    toast.success(`${acceptedFiles.length} file(s) added successfully!`);
+    acceptedFiles.forEach(file => {
+      const validation = validateFile(file);
+      if (validation.isValid) {
+        validFiles.push(createFilePreview(file));
+      } else {
+        validation.errors.forEach(error => toast.error(error));
+      }
+    });
+    
+    if (validFiles.length > 0) {
+      setFiles(prev => [...prev, ...validFiles]);
+      toast.success(`${validFiles.length} file(s) added successfully!`);
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -52,7 +61,7 @@ const Upload = () => {
     setFiles(prev => {
       const fileToRemove = prev.find(f => f.id === id);
       if (fileToRemove) {
-        URL.revokeObjectURL(fileToRemove.preview);
+        revokeFilePreview(fileToRemove.preview);
       }
       return prev.filter(f => f.id !== id);
     });
@@ -82,22 +91,34 @@ const Upload = () => {
     setUploading(true);
     
     try {
-      const uploadPromises = files.map(({ file }) => {
-        const data = new FormData();
-        data.append('file', file);
-        data.append('title', formData.title);
-        data.append('description', formData.description);
-        data.append('eventType', formData.eventType);
-        data.append('eventDate', formData.eventDate);
+      const uploadPromises = files.map(({ file, type, preview }) => {
+        const fileData = {
+          title: formData.title,
+          description: formData.description,
+          eventType: formData.eventType,
+          eventDate: formData.eventDate,
+          type,
+          fileName: file.name,
+          fileSize: file.size,
+          preview
+        };
         
-        return uploadMedia(data);
+        return uploadMedia(fileData);
       });
 
-      await Promise.all(uploadPromises);
+      const results = await Promise.all(uploadPromises);
+      
+      // Add items to gallery context
+      results.forEach(result => {
+        if (result.success) {
+          addItem(result.data);
+        }
+      });
       
       toast.success('Files uploaded successfully!');
       
       // Reset form
+      files.forEach(({ preview }) => revokeFilePreview(preview));
       setFiles([]);
       setFormData({
         title: '',
@@ -153,7 +174,7 @@ const Upload = () => {
                 <div className="file-preview">
                   <h4>Selected Files ({files.length})</h4>
                   <div className="preview-grid">
-                    {files.map(({ id, file, preview, type }) => (
+                    {files.map(({ id, file, preview, type, name, size }) => (
                       <div key={id} className="preview-item">
                         <div className="preview-media">
                           {type === 'image' ? (
@@ -166,8 +187,8 @@ const Upload = () => {
                           </div>
                         </div>
                         <div className="preview-info">
-                          <p className="file-name">{file.name}</p>
-                          <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                          <p className="file-name">{name}</p>
+                          <p className="file-size">{(size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                         <button
                           type="button"

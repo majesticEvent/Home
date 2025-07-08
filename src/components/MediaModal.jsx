@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Download, Calendar, Tag, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { formatFileSize } from '../utils/fileUtils';
 import './MediaModal.css';
 
 const MediaModal = ({ item, onClose }) => {
@@ -13,14 +14,6 @@ const MediaModal = ({ item, onClose }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (

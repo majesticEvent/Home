@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { sendContactForm } from '../services/api';
 import './Contact.css';
 
 const Contact = () => {
@@ -34,8 +35,7 @@ const Contact = () => {
     setSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await sendContactForm(formData);
       
       toast.success('Message sent successfully! We\'ll get back to you soon.');
       
