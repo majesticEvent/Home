@@ -1,5 +1,6 @@
 // Enhanced API service for handling media uploads and gallery operations
 import { createFilePreview } from '../utils/fileUtils';
+import emailjs from '@emailjs/browser';
 
 // Simulate API delay
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
