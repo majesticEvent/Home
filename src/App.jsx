@@ -19,7 +19,7 @@ function App() {
           <Header />
           <main>
             <Routes>
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/upload" element={<Upload />} />
               <Route path="/events" element={<Events />} />

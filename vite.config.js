@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/Home/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -12,7 +11,10 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: undefined,
+        // Chunking libraries into a separate file for better caching
+        manualChunks: {
+          vendor: ['react', 'react-dom'] // Modify as per your app dependencies
+        },
       },
     },
   },
