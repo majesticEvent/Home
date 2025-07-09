@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Heart, Star, Users, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import img from '../assets/1.mp4'
 import './Home.css';
 
 const Home = () => {
@@ -41,7 +42,7 @@ const Home = () => {
       <section className="hero">
         <div className="hero-background">
           <video autoPlay muted loop playsInline>
-          <source src="src/assets/1.mp4" type="video/mp4" />
+          <source src={img} type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
         </div>
